@@ -1,14 +1,8 @@
 from datetime import datetime
 import sys
-import traceback
 import discord
 from discord.ext import commands
 from random import randint
-import logging
-import time
-
-import asyncio
-
 from dotenv import load_dotenv
 from os import getenv
 import os
@@ -60,8 +54,13 @@ async def on_ready():
         bot.command_prefix = commands.when_mentioned_or("\\")
         print(f"Prefix is \\")
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.reply(f"Slow down! {round(error.retry_after, 2)} seconds left on cooldown")
+    else:
+        print(error)
 
-        
 # Reload cogs command
 @bot.command()
 @commands.is_owner()
